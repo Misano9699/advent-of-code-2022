@@ -3,11 +3,10 @@ fun main() {
     fun splitInTwo(rucksack: String): List<Set<Char>> =
         listOf(rucksack.take(rucksack.length / 2).toSet(), rucksack.takeLast(rucksack.length / 2).toSet())
 
-    fun priority(item: Char): Int =
-        when {
-            item.isLowerCase() -> item.code - 96
-            else -> item.code - 38
-        }
+    fun priority(item: Char): Int = when {
+        item.isLowerCase() -> item.code - 96 // lowercase a starts at 97 in ASCII table
+        else -> item.code - 38 // uppercase A starts at 65
+    }
 
     fun part1(input: List<String>): Int {
         return input.sumOf { rucksack ->
@@ -18,7 +17,6 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         val rucksacks = input.splitIntoNumberOfLists(3)
-        println(rucksacks)
         return rucksacks.sumOf {
             priority(it[0].toSet().intersect((it[1].toSet().intersect(it[2].toSet()))).first())
         }

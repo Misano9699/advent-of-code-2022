@@ -4,10 +4,28 @@ const val WIN = 6
 
 fun main() {
 
-    val elvesMap: Map<String, RockPaperScissors> =
-        mapOf(Pair("A", RockPaperScissors.ROCK), Pair("B", RockPaperScissors.PAPER), Pair("C", RockPaperScissors.SCISSORS))
-    val meMap: Map<String, RockPaperScissors> =
-        mapOf(Pair("X", RockPaperScissors.ROCK), Pair("Y", RockPaperScissors.PAPER), Pair("Z", RockPaperScissors.SCISSORS))
+    val elvesMap: Map<String, RockPaperScissors> = mapOf("A" to RockPaperScissors.ROCK, "B" to RockPaperScissors.PAPER, "C" to RockPaperScissors.SCISSORS)
+
+    val meMap: Map<String, RockPaperScissors> = mapOf("X" to RockPaperScissors.ROCK, "Y" to RockPaperScissors.PAPER, "Z" to RockPaperScissors.SCISSORS)
+
+    val winMap: Map<RockPaperScissors, RockPaperScissors> = mapOf(
+        RockPaperScissors.ROCK to RockPaperScissors.PAPER,
+        RockPaperScissors.PAPER to RockPaperScissors.SCISSORS,
+        RockPaperScissors.SCISSORS to RockPaperScissors.ROCK
+    )
+
+    val lossMap: Map<RockPaperScissors, RockPaperScissors> = mapOf(
+        RockPaperScissors.ROCK to RockPaperScissors.SCISSORS,
+        RockPaperScissors.PAPER to RockPaperScissors.ROCK,
+        RockPaperScissors.SCISSORS to RockPaperScissors.PAPER
+    )
+
+    fun calculateScore(elf: RockPaperScissors, outcome: String): Int = when (outcome) {
+        "X" -> elf.score(lossMap[elf]!!)
+        "Y" -> elf.score(elf)
+        "Z" -> elf.score(winMap[elf]!!)
+        else -> throw IllegalArgumentException("Ongeldige waarde")
+    }
 
     fun part1(input: List<String>): Int {
         return input.sumOf {
@@ -34,41 +52,16 @@ fun main() {
     println("Answer part2: " + part2(input))
 }
 
-fun calculateScore(elf: RockPaperScissors, outcome: String): Int = when(outcome) {
-    "X" -> lose(elf)
-    "Y" -> draw(elf)
-    "Z" -> win(elf)
-    else -> throw IllegalArgumentException("Ongeldige waarde")
-}
-
-fun win(elf: RockPaperScissors): Int = WIN + when (elf)  {
-    RockPaperScissors.ROCK -> RockPaperScissors.PAPER.score
-    RockPaperScissors.PAPER -> RockPaperScissors.SCISSORS.score
-    RockPaperScissors.SCISSORS -> RockPaperScissors.ROCK.score
-}
-
-fun draw(elf: RockPaperScissors): Int = DRAW + when (elf) {
-    RockPaperScissors.ROCK -> RockPaperScissors.ROCK.score
-    RockPaperScissors.PAPER -> RockPaperScissors.PAPER.score
-    RockPaperScissors.SCISSORS -> RockPaperScissors.SCISSORS.score
-}
-
-fun lose(elf: RockPaperScissors): Int = LOSS +  when (elf)  {
-    RockPaperScissors.ROCK -> RockPaperScissors.SCISSORS.score
-    RockPaperScissors.PAPER -> RockPaperScissors.ROCK.score
-    RockPaperScissors.SCISSORS -> RockPaperScissors.PAPER.score
-}
-
 enum class RockPaperScissors(val score: Int) {
     ROCK(1),
     PAPER(2),
     SCISSORS(3);
 
     fun score(other: RockPaperScissors): Int = when {
+        this.ordinal == other.ordinal -> DRAW + other.score
         this == ROCK && other == SCISSORS -> LOSS + other.score
         this == SCISSORS && other == ROCK -> WIN + other.score
         this.ordinal < other.ordinal -> WIN + other.score
-        this.ordinal == other.ordinal -> DRAW + other.score
         else -> LOSS + other.score
     }
 }

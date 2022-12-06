@@ -1,19 +1,15 @@
 fun main() {
 
+    fun listOfCalories(listOfElves: List<List<String>>): List<Int> = listOfElves.map { elf ->
+        elf.sumOf { it.toInt() }
+    }
+
     fun part1(input: List<String>): Int {
-        val listOFElves : List<List<String>> = input.splitIntoSublists("")
-        val listOfCalories =  listOFElves.map { elf ->
-            elf.map { it.toInt() }.sum()
-        }
-        return listOfCalories.maxOf { it }
+        return listOfCalories(input.splitIntoSublists("")).maxOf { it }
     }
 
     fun part2(input: List<String>): Int {
-        val listOFElves : List<List<String>> = input.splitIntoSublists("")
-        val listOfCalories =  listOFElves.map { elf ->
-            elf.map { it.toInt() }.sum()
-        }
-        return listOfCalories.sortedDescending().take(3).sum()
+        return listOfCalories(input.splitIntoSublists("")).sortedDescending().take(3).sum()
     }
 
     // test if implementation meets criteria from the description, like:
