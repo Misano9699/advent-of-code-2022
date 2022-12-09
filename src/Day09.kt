@@ -3,55 +3,41 @@ fun main() {
     val head = 0
     var tail = 1
 
-    var knots = MutableList(tail + 1) { Point(0,0)}
-    var knot = 1
+    var knots = MutableList(tail + 1) { Point(0, 0) }
     var tailPoints = mutableSetOf(knots[tail])
 
     fun reset() {
-        knot = 1
-        knots = MutableList(tail + 1) { Point(0,0)}
+        knots = MutableList(tail + 1) { Point(0, 0) }
         tailPoints = mutableSetOf(knots[tail])
-        println(knot)
     }
 
-    fun moveTailY() {
-        when (knots[knot-1].y - knots[knot].y) {
-            1, 2 -> knots[knot] = knots[knot].up()
-            -1, -2 -> knots[knot] = knots[knot].down()
-        }
+    fun moveTailY(knot: Int) = when (knots[knot - 1].y - knots[knot].y) {
+        1, 2 -> knots[knot].up()
+        -1, -2 -> knots[knot].down()
+        else -> knots[knot]
     }
 
-    fun moveTailX() {
-        when (knots[knot-1].x - knots[knot].x) {
-            1, 2 -> knots[knot] = knots[knot].right()
-            -1, -2  -> knots[knot] = knots[knot].left()
-        }
+    fun moveTailX(knot: Int) = when (knots[knot - 1].x - knots[knot].x) {
+        1, 2 -> knots[knot].right()
+        -1, -2 -> knots[knot].left()
+        else -> knots[knot]
     }
 
-    fun moveTail() {
-        when (knots[knot-1].x - knots[knot].x) {
-            2 -> {
-                moveTailY()
-                knots[knot] = knots[knot].right()
-            }
-            -2 -> {
-                moveTailY()
-                knots[knot] = knots[knot].left()
-            }
+    fun moveTail(knot: Int): Point {
+        var point = when (knots[knot - 1].x - knots[knot].x) {
+            2 -> moveTailY(knot).right()
+            -2 -> moveTailY(knot).left()
+            else -> knots[knot]
         }
-        when (knots[knot-1].y - knots[knot].y) {
-            2 -> {
-                moveTailX()
-                knots[knot] = knots[knot].up()
-            }
-            -2 -> {
-                moveTailX()
-                knots[knot] = knots[knot].down()
-            }
+        point = when (knots[knot - 1].y - knots[knot].y) {
+            2 -> moveTailX(knot).up()
+            -2 -> moveTailX(knot).down()
+            else -> point
         }
+        return point
     }
 
-    fun moveHead(direction: String)= when (direction) {
+    fun moveHead(direction: String) = when (direction) {
         "R" -> knots[head].right()
         "L" -> knots[head].left()
         "U" -> knots[head].up()
@@ -59,16 +45,13 @@ fun main() {
         else -> knots[head]
     }
 
-    fun move(direction:String, number: Int) {
-        (1 .. number).forEach { _ ->
+    fun moveKnots(direction: String, knot: Int) {
+        (1..knot).forEach { _ ->
             knots[head] = moveHead(direction)
             (1..tail).forEach {
-                knot = it
-                moveTail()
+                knots[it] = moveTail(it)
             }
             tailPoints.add(knots[tail])
-            println("Head: ${knots[head]}")
-            println("Tail: ${knots[tail]}")
         }
     }
 
@@ -77,7 +60,7 @@ fun main() {
         reset()
         input.forEach { line ->
             val move = line.split(" ")
-            move(move[0], move[1].toInt())
+            moveKnots(move[0], move[1].toInt())
         }
         return tailPoints.count()
     }
@@ -87,7 +70,7 @@ fun main() {
         reset()
         input.forEach { line ->
             val move = line.split(" ")
-            move(move[0], move[1].toInt())
+            moveKnots(move[0], move[1].toInt())
         }
         return tailPoints.count()
     }
@@ -105,9 +88,9 @@ fun main() {
     println("Answer part2: " + part2(input))
 }
 
-data class Point(val x : Int, val y : Int) {
-    fun left() : Point = Point(this.x-1, this.y)
-    fun right() : Point = Point(this.x+1, this.y)
-    fun up() : Point = Point(this.x, this.y+1)
-    fun down() : Point = Point(this.x, this.y-1)
+data class Point(val x: Int, val y: Int) {
+    fun left(): Point = Point(this.x - 1, this.y)
+    fun right(): Point = Point(this.x + 1, this.y)
+    fun up(): Point = Point(this.x, this.y + 1)
+    fun down(): Point = Point(this.x, this.y - 1)
 }
